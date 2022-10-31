@@ -57,3 +57,39 @@ MPC(multi-party computation)
 
 `snarkjs powersoftau prepare phase2 pot12_beacon.ptau pot12_final.ptau -v`
 => tauG1 => tauG2 => alphaTauG1 => betaTauG1 순으로 DEBUG
+
+### 8. 마지막 ptau 검증!
+
+circuit 서킷을 생성하기 전에 최종적으로 ptau 를 검증한다.
+
+`snarkjs powersoftau verify pot12_final.ptau`
+
+### 9. circom 파일 생성!
+
+=> multiple 1000 으로 설정함. constraints 수를 의미한다.
+
+cat <<EOT > circuit.circom
+pragma circom 2.0.0;
+
+template Multiplier(n) {
+signal input a;
+signal input b;
+signal output c;
+
+    signal int[n];
+
+    int[0] <== a*a + b;
+    for (var i=1; i<n; i++) {
+    int[i] <== int[i-1]*int[i-1] + b;
+    }
+
+    c <== int[n-1];
+
+}
+
+component main = Multiplier(1000);
+EOT
+
+### 10. circom compile
+
+`circom circuit.circom --r1cs --wasm --sym`
