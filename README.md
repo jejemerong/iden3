@@ -93,3 +93,24 @@ EOT
 ### 10. circom compile
 
 `circom circuit.circom --r1cs --wasm --sym`
+=> circuit.rlcs (the r1cs constraint system of the circuit in binary format)
+circuit.sym (a symbols file required for debugging and printing the constraint system)
+circuit.wasm (the wasm code to generate the witness)
+파일을 생성
+
+### >> 아니 근데 circom 도 설치 안한 상태에서 ㅋㅋㅋㅋ
+
+`curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh`
+`git clone https://github.com/iden3/circom.git`
+`cargo build --release`
+`cargo install --path circom`
+
+이제 10번 된당!!
+
+### 11. circuit 에 대한 상태 출력
+
+`snarkjs r1cs info circuit.r1cs`
+
+### 12. constraints
+
+`snarkjs r1cs print circuit.r1cs circuit.sym`
