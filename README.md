@@ -134,3 +134,62 @@ EOT 가 입력을 시작하고 닫을 때, 사용하는 것 같다.
 => circuit_js 폴더로 이동
 `node generate_witness.js circuit.wasm ../input.json ../witness.wtns`
 => witness.wtns 생성
+
+### 15. Setup
+
+Plonk 나 Groth16 으로 r1cs ptau 를 계산하여 zeroknowledge key 인 zkey 를 생성하는데
+이때 production 단계에서는 이 zkey 를 사용하면 안된다.
+
+`zkey new` 명령어를 사용하여 zkey 가 생성되며 이때까지는 아직 contribution 이 없다.
+그렇기 때문에 처음 circuit 에서 이 zkey 를 사용할 수 없다.
+
+case #1. Plonk
+`snarkjs plonk setup circuit.r1cs pot12_final.ptau circuit_final.zkey`
+=> circuit_final.zkey 생성
+
+case #2. Groth16
+`snarkjs groth16 setup circuit.r1cs pot12_final.ptau circuit_0000.zkey`
+=> circuit_0000.zkey
+
+이때까지의 과정은 phase 1 이었고 앞으로는 power of tau 를 zkey 로 대체할 것이다.
+
+### 16. phase 2 로 가즈아
+
+`snarkjs zkey contribute circuit_0000.zkey circuit_0001.zkey --name="1st Contributor Name" -v`
+
+랜덤값 입력하기!
+
+0번째 circuit 의 상태를 1번째 circuit 에 담아 첫번째 contribute 를 실행한 것이다.
+이때, `zkey create`와 `zkey contribute`의 차이점은 contribution 의 유무이다.
+전자는 없고 후자는 있다!!
+
+=> circuit_0001.zkey 생성
+
+### 17. 두번째 contribute 가즈아
+
+`snarkjs zkey contribute circuit_0001.zkey circuit_0002.zkey --name="Second contribution Name" -v -e="Another random entropy"`
+=> circuit_0002.zkey 생성
+
+### 18. 써드파티 프로그램을 사용하여 3번째 contribute 하기
+
+`snarkjs zkey export bellman circuit_0002.zkey challenge_phase2_0003 snarkjs zkey bellman contribute bn128 challenge_phase2_0003 response_phase2_0003 -e="some random text" snarkjs zkey import bellman circuit_0002.zkey response_phase2_0003 circuit_0003.zkey -n="Third contribution name"`
+
+이때 이용하는 써드파티 프로그램은 phase2-bn254
+=> 오 이거 카이로 수업 때 나온 254비트 얘기같은데!!
+https://github.com/kobigurk/phase2-bn254
+
+=> circuit_0003.zkey, challenge_phase2_0003, response_phase2_0003 생성
+
+### 19. 마지막 zkey 검증하기 (MPC)
+
+`zkey verify` 명령어가 zkey "로" 검증하는 것이 아니라 zkey "를" 검증하는 것이었다!
+
+`snarkjs zkey verify circuit.r1cs pot12_final.ptau circuit_0003.zkey`
+
+=> ZKey Ok!
+
+### 20. 랜덤 비콘 적용하기
+
+`snarkjs zkey beacon circuit_0003.zkey circuit_final.zkey 0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 10 -n="Final Beacon phase2"`
+
+`zkey beacon`는 랜덤 비콘으로 마지막 contribution 을 진행하기 위한 zkey 파일을 생성한다.
