@@ -111,6 +111,26 @@ circuit.wasm (the wasm code to generate the witness)
 
 `snarkjs r1cs info circuit.r1cs`
 
-### 12. constraints
+### 12. constraints 출력
 
 `snarkjs r1cs print circuit.r1cs circuit.sym`
+
+결과값은 아래와 같이 출력된다.
+
+`snarkJS: [ 21888242871839275222246405745257275088548364400416034343698204186575808495616main.int[998] ] * [ main.int[998] ] - [ 21888242871839275222246405745257275088548364400416034343698204186575808495616main.c +main.b ] = 0`
+
+### 13. export r1cs to json
+
+`snarkjs r1cs export json circuit.r1cs circuit.r1cs.json; cat circuit.r1cs.json`
+=> r1cs 를 json 파일로 export
+
+### 14. witness 계산
+
+`cat <<EOT > input.json {"a": 3, "b": 11} EOT`
+
+EOT 가 vi 같은 명령어인가?
+EOT 가 입력을 시작하고 닫을 때, 사용하는 것 같다.
+
+=> circuit_js 폴더로 이동
+`node generate_witness.js circuit.wasm ../input.json ../witness.wtns`
+=> witness.wtns 생성
