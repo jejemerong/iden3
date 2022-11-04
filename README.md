@@ -193,3 +193,60 @@ https://github.com/kobigurk/phase2-bn254
 `snarkjs zkey beacon circuit_0003.zkey circuit_final.zkey 0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 10 -n="Final Beacon phase2"`
 
 `zkey beacon`는 랜덤 비콘으로 마지막 contribution 을 진행하기 위한 zkey 파일을 생성한다.
+
+### 21. final zkey 검증하기
+
+`snarkjs zkey verify circuit.r1cs pot12_final.ptau circuit_final.zkey`
+=> Zkey Ok!
+
+### 22. verification key 추출
+
+circuit_final.zkey 에서 추출한다!
+`snarkjs zkey export verificationkey circuit_final.zkey verification_key.json`
+=> verification_key.json 생성
+
+### 23. proof 생성!!!
+
+PLONK 로 실행하면 Error: zkey file is not plonk 라고 에러 뜬다.
+`snarkjs plonk prove circuit_final.zkey witness.wtns proof.json public.json`
+
+Groth16 으로 실행하면 된다!
+`snarkjs groth16 prove circuit_final.zkey witness.wtns proof.json public.json`
+=> proof.json, public.json 생성
+
+### 24. proof 검증
+
+PLONK 는 일단 명령어만 적어두고
+`snarkjs plonk verify verification_key.json public.json proof.json`
+
+Groth16 으로 실행
+`snarkjs groth16 verify verification_key.json public.json proof.json`
+=> snarkJS: OK!
+
+### 25. verifier 스마트컨트랙트로 생성
+
+`snarkjs zkey export solidityverifier circuit_final.zkey verifier.sol`
+=> verifier.sol 생성
+
+### 26. 검증 트랜잭션 호출해보기!
+
+`snarkjs zkey export soliditycalldata public.json proof.json`
+
+`["0x0a110aa4423f719697bd4e496562788c4de532bcfd49e74a1ed33f9c44e784a1", "0x253c81d21e7bebc88e2a2eb6db3c84b5874c3d4729151cae1c9edd774f726a08"],[["0x1b5988625854a5ee1b50e28c9ca36206a6dee872df2a829d9bd79f674fc3a6be", "0x2818d8bf6c0ede3cac12cdf7ee87793b53574a4f270ace96880abf769c816f03"],["0x1918a5bbefa54a13336de9ba5f5cb040fe942357d388026c947a96264c08ac7f", "0x0b79c7dc370860cc5402ecde297088ab4c94690d2bc7aa643832e2b1321f6f44"]],["0x1f81b6b5f8cec63a999f41bd13d11fd472af791b02b70e79c71b3a573ee56f66", "0x1bed494a67e3f7572159a4f4672806c404e8fbc4c30daa5ee34b770df844c2c2"],["0x110d778eaf8b8ef7ac10f8ac239a14df0eb292a8d1b71340d527b26301a9ab08"]` 출력!
+
+### 27. node 실행
+
+구성환경은 다음과 같다.
+
+1. `npm init`
+2. `npm install snarkjs`
+3. index.js 파일 생성
+4. package.json scripts 에 npm start 로 `node index.js` 추가하기
+
+이때, circuit_js 폴더 내에 있는 circuit.wasm 파일을 최상단으로 빼야 한다.
+`npm start` 로 실행하면 proof 데이터 출력
+
+### 28.
+
+`cp node_modules/snarkjs/build/snarkjs.min.js .`
+=> snark.min.js 생성
