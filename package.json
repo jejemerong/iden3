@@ -1,0 +1,26 @@
+{
+  "name": "zkapp",
+  "version": "1.0.0",
+  "description": "zkapp with snarkjs like iden3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jejemerong/zkapp.git"
+  },
+  "author": "jemerald",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jejemerong/zkapp/issues"
+  },
+  "homepage": "https://github.com/jejemerong/zkapp#readme",
+  "dependencies": {
+    "snarkjs": "^0.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9"
+  }
+}
