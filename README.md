@@ -246,7 +246,7 @@ Groth16 으로 실행
 이때, circuit_js 폴더 내에 있는 circuit.wasm 파일을 최상단으로 빼야 한다.
 `npm start` 로 실행하면 proof 데이터 출력
 
-### 28.
+### 28.client 실행
 
 `cp node_modules/snarkjs/build/snarkjs.min.js .`
 => snark.min.js 생성
